@@ -287,9 +287,10 @@ template<class T> class SerializationTraits<flatbuffers::grpc::Message<T>> {
   }
 
   // Deserialize by pulling the
-  static grpc::Status Deserialize(grpc_byte_buffer *buffer,
+  static grpc::Status Deserialize(ByteBuffer *bb,
                                   flatbuffers::grpc::Message<T> *msg) {
-    if (!buffer) {
+    grpc_byte_buffer* buffer = nullptr;
+    if (!bb || !(buffer = bb->c_buffer())) {
       return ::grpc::Status(::grpc::StatusCode::INTERNAL, "No payload");
     }
     // Check if this is a single uncompressed slice.
